@@ -12,10 +12,12 @@ const headers = {
 
 app.get('/:formId/filteredResponses', async (req, res) => {
   const formId = req.params['formId']
-  console.log(req.query)
   try {
-    const filloutResponse = await axios.get(`${baseEndpoint}/${formId}/submissions`, {headers})
-    // console.log(filloutResponse.data)
+    const filloutResponse = await axios.get(`${baseEndpoint}/${formId}/submissions`, {
+      params: req.query,
+      headers
+    })
+    console.log(filloutResponse.data)
     res.send('Hello World!')
   } catch (err) {
     console.log(err)
