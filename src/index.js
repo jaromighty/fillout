@@ -23,17 +23,29 @@ app.get('/:formId/filteredResponses', async (req, res) => {
     
     if (req.query['filters']?.length > 0) {
       let parsedFilters = JSON.parse(req.query['filters'])
-      let responsesToRemove = []
       parsedFilters.forEach((filter) => {
-        filteredResponses.forEach((response, responseIdx) => {
-          let question = response.questions.find((question) => question.id === filter.id)
-          if (question.value !== filter.value) {
-            responsesToRemove.push(responseIdx)
-          }
-        })
-        console.log(responsesToRemove)
-        filteredResponses = filteredResponses.filter((response, index) => !responsesToRemove.includes(index))
-        console.log(filteredResponses)
+        let responsesToRemove = []
+        switch (filter.condition) {
+          case 'equals':
+            filteredResponses.forEach((response, responseIdx) => {
+              let question = response.questions.find((question) => question.id === filter.id)
+              if (question.value !== filter.value) {
+                responsesToRemove.push(responseIdx)
+              }
+            })
+            filteredResponses = filteredResponses.filter((response, index) => !responsesToRemove.includes(index))
+            break;
+          case 'does_not_equal':
+            console.log(filter)
+            filteredResponses.forEach((response, responseIdx) => {
+              let question = response.questions.find((question) => question.id === filter.id)
+              if (question.value === filter.value) {
+                responsesToRemove.push(responseIdx)
+              }
+            })
+            filteredResponses = filteredResponses.filter((response, index) => !responsesToRemove.includes(index))
+            break;
+        }
       })
     } else {
       res.send('No responses to display')
@@ -43,7 +55,6 @@ app.get('/:formId/filteredResponses', async (req, res) => {
       responses: filteredResponses
     }
     res.send(responseData)
-    // console.log(responses)
   } catch (err) {
     console.log(err)
     res.status(500).send('Something went wrong')
