@@ -3,18 +3,21 @@ const express = require('express')
 const app = express()
 const port = 3000
 
-const apiKey = 'sk_prod_TfMbARhdgues5AuIosvvdAC9WsA5kXiZlW8HZPaRDlIbCpSpLsXBeZO7dCVZQwHAY3P4VSBPiiC33poZ1tdUj2ljOzdTCCOSpUZ_3912'
-const formId = 'cLZojxk94ous'
-const endpoint = `https://api.fillout.com/v1/api/forms/${formId}/submissions`
+const apiKey = process.env.API_KEY
 
-app.get('/', async (req, res) => {
+const baseEndpoint = `https://api.fillout.com/v1/api/forms`
+const options = {
+  headers: {
+    Authorization: `Bearer ${apiKey}`
+  }
+}
+
+app.get('/:formId/filteredResponses', async (req, res) => {
+  const formId = req.params['formId']
+  console.log(req.query)
   try {
-    const filloutResponse = await axios.get(endpoint, {
-      headers: {
-        Authorization: `Bearer ${apiKey}`
-      }
-    })
-    console.log(filloutResponse.data)
+    const filloutResponse = await axios.get(`${baseEndpoint}/${formId}/submissions`, options)
+    // console.log(filloutResponse.data)
     res.send('Hello World!')
   } catch (err) {
     console.log(err)
