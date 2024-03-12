@@ -36,10 +36,24 @@ app.get('/:formId/filteredResponses', async (req, res) => {
             filteredResponses = filteredResponses.filter((response, index) => !responsesToRemove.includes(index))
             break;
           case 'does_not_equal':
-            console.log(filter)
             filteredResponses.forEach((response, responseIdx) => {
               let question = response.questions.find((question) => question.id === filter.id)
               if (question.value === filter.value) {
+                responsesToRemove.push(responseIdx)
+              }
+            })
+            filteredResponses = filteredResponses.filter((response, index) => !responsesToRemove.includes(index))
+            break;
+          case 'greater_than':
+            filteredResponses.forEach((response, responseIdx) => {
+              let question = response.questions.find((question) => question.id === filter.id)
+              if (question.value === null) {
+                responsesToRemove.push(responseIdx)
+              }
+              if (
+                (typeof question.value === 'string' && new Date(question.value) <= new Date(filter.value)) ||
+                (typeof question.value === 'number' && question.value <= filter.value)
+              ) {
                 responsesToRemove.push(responseIdx)
               }
             })
