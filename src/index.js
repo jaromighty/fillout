@@ -6,17 +6,15 @@ const port = 3000
 const apiKey = process.env.API_KEY
 
 const baseEndpoint = `https://api.fillout.com/v1/api/forms`
-const options = {
-  headers: {
-    Authorization: `Bearer ${apiKey}`
-  }
+const headers = {
+  Authorization: `Bearer ${apiKey}`
 }
 
 app.get('/:formId/filteredResponses', async (req, res) => {
   const formId = req.params['formId']
   console.log(req.query)
   try {
-    const filloutResponse = await axios.get(`${baseEndpoint}/${formId}/submissions`, options)
+    const filloutResponse = await axios.get(`${baseEndpoint}/${formId}/submissions`, {headers})
     // console.log(filloutResponse.data)
     res.send('Hello World!')
   } catch (err) {
